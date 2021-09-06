@@ -9,81 +9,79 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-type bukucreate struct{
-	NamaBuku string `json:"nama_buku"`
-	NoTelp string 	`json:"no_telp"`
-	Stok int 		`json:"stok"`
+type membercreate struct{
+	Nama string `json:"nama"`
+	Jenis_kelamin string `json:"jenis_kelamin"`
 }
 
 // nama harus besar agar dapat dipanggil
-func GetAllBuku(c *gin.Context){
+func GetAllMember(c *gin.Context){
 	// koneksi db . membuka sesuai setingan setup.go
 	db:= c.MustGet("db").(*gorm.DB)
 
-	var buku []models.Buku
+	var member []models.Buku
 	// query
-	db.Find(&buku)
-	c.JSON(http.StatusOK,gin.H{"data" : buku})
+	db.Find(&member)
+	c.JSON(http.StatusOK,gin.H{"data" : member})
 } 
 
-func CreateBuku(c *gin.Context)  {
+func CreateMember(c *gin.Context)  {
 	// koneksi db . membuka sesuai setingan setup.go
 	db:= c.MustGet("db").(*gorm.DB)
 
 	// input validasi
-	var dataInput bukucreate
+	var dataInput membercreate
 	if err := c.ShouldBindJSON(&dataInput);err != nil {
 		c.JSON(http.StatusBadRequest,gin.H{"error" : err.Error()})
 	}
 
 	// proses input
-	if dataInput.NamaBuku == "" || dataInput.NoTelp == "" || dataInput.Stok == 0 {
+	if dataInput.Nama == "" || dataInput.Jenis_kelamin == ""{
 		c.JSON(http.StatusBadRequest,gin.H{"error" : "data tidak boleh kosong"})
 		return
 	}
-	buku := models.Buku{
+	member := models.Member{
 		// Model : data input
-		NamaBuku: dataInput.NamaBuku,
-		NoTelp: dataInput.NoTelp,
-		Stok: dataInput.Stok,
+		Nama: dataInput.Nama,
+		Jenis_kelamin: dataInput.Jenis_kelamin,
 	}
 
-	db.Create(&buku)
+	db.Create(&member)
 	c.JSON(http.StatusOK,gin.H{"status" : "Berhasil Ditambahkan"})
 	
 }
 
-func UpdateBuku(c *gin.Context)  {
+func UpdateMember(c *gin.Context)  {
 	db := c.MustGet("db").(*gorm.DB)
 
 	// cek data sesuai id
-	var buku models.Buku
-	if err := db.Where("id = ?", c.Param("id")).First(&buku).Error; err != nil {
+	var member models.Member
+	if err := db.Where("id = ?", c.Param("id")).First(&member).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error":"data tidak ditemukan"})
 		return
 	}
 
 	// input validasi
-	var dataInput bukucreate
+	var dataInput membercreate
 	if err := c.ShouldBindJSON(&dataInput);err != nil {
 		c.JSON(http.StatusBadRequest,gin.H{"error" : err.Error()})
 	}
 
 	// proses input
-	if dataInput.NamaBuku == "" || dataInput.NoTelp == "" || dataInput.Stok == 0 {
+	if dataInput.Nama == "" || dataInput.Jenis_kelamin == "" {
 		c.JSON(http.StatusBadRequest,gin.H{"error" : "data tidak boleh kosong"})
 		return
 	}
-	db.Model(&buku).Update(dataInput)
+	db.Model(&member).Update(dataInput)
 	
 	c.JSON(http.StatusOK,gin.H{"status" : "Berhasil Diubah"})
 
 }
 
-func DeleteBuku(c *gin.Context)  {
+func DeleteMember(c *gin.Context)  {
 	db := c.MustGet("db").(*gorm.DB)
 	
-	var buku models.Buku
+	var buku models.Transaksi
 	if err := db.Where("id = ?", c.Param("id")).First(&buku).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error":"data tidak ditemukan"})
 		return

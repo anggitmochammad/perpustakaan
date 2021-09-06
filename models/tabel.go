@@ -2,7 +2,6 @@ package models
 
 // variabel harus besar agar dapat diimport
 type Buku struct{
-	
 	// untuk dipanggil| tipe data | untuk database
 	ID int  `gorm:"PRIMARY_KEY"`
 	NamaBuku string 	
@@ -15,13 +14,13 @@ type Member struct{
 	Nama string 	
 	Jenis_kelamin string 
 	// has many
-	Transaksi []Transaksi
+	Transaksi []Transaksi `gorm:"foreignkey:ID_Member"`
 }
 
 type Transaksi struct{
 	ID int  `gorm:"PRIMARY_KEY"`
 	ID_Member uint
-	Member Member `gorm:"foreignkey:ID_Member"`
 	Jenis_kelamin string 	
 	Tipe string 
+	Jumlah int
 }

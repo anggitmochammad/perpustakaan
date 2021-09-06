@@ -34,6 +34,20 @@ func main()  {
 		buku.PUT("/:id",controllers.UpdateBuku)
 		buku.DELETE("/:id",controllers.DeleteBuku)
 	}
+	member := route.Group("member")
+	{
+		member.GET("/",controllers.GetAllMember)
+		member.POST("/",controllers.CreateMember)
+		member.PUT("/:id",controllers.UpdateMember)
+		member.DELETE("/:id",controllers.DeleteMember)
+	}
+	transaksi := route.Group("transaksi")
+	{
+		transaksi.GET("/",controllers.GetAllTransaksi)
+		transaksi.POST("/",controllers.CreateTransaksi)
+		transaksi.PUT("/:id",controllers.UpdateTransaksi)
+		transaksi.DELETE("/:id",controllers.DeleteTransaksi)
+	}
 
 	// run route . Jika tidak diisi defaultnya localhost:8080
 	route.Run(":7070")
