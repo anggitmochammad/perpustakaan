@@ -1,0 +1,40 @@
+package main
+
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+
+	"perpustakaan/controllers"
+	"perpustakaan/models"
+)
+
+func main()  {
+	// inisialisasi route
+	route := gin.Default()
+
+	// model
+	db := models.SetupModels()
+	route.Use(func(c *gin.Context) {
+		c.Set("db",db)
+		// jalankan proses berikutnya
+		c.Next()
+	})
+
+	// membuat route
+	route.GET("/",func(c *gin.Context) {
+		// mengirim status dan data json
+		c.JSON(http.StatusOK, gin.H{"data" :"Test Api" })
+	})
+
+	buku := route.Group("buku")
+	{
+		buku.GET("/",controllers.GetAllBuku)
+		buku.POST("/",controllers.CreateBuku)
+		buku.PUT("/:id",controllers.UpdateBuku)
+		buku.DELETE("/:id",controllers.DeleteBuku)
+	}
+
+	// run route . Jika tidak diisi defaultnya localhost:8080
+	route.Run(":7070")
+}
