@@ -20,7 +20,14 @@ type Member struct{
 type Transaksi struct{
 	ID int  `gorm:"PRIMARY_KEY"`
 	ID_Member uint
-	Jenis_kelamin string 	
 	Tipe string 
+	// has many
+	DetailTransaksi []DetailTransaksi `gorm:"foreignkey:ID_Transaksi"`
+}
+
+type DetailTransaksi struct{
+	ID int  `gorm:"PRIMARY_KEY"`
+	ID_Transaksi uint
+	ID_Buku uint
 	Jumlah int
 }

@@ -21,10 +21,8 @@ func SetupModels() *gorm.DB  {
 	  panic("Gagal koneksi database")	
   }
 
-//   deklrasi struct
-  db.AutoMigrate(&Buku{})
-  db.AutoMigrate(&Member{})
-  db.AutoMigrate(&Transaksi{})
+//   migrate tabel
+  db.AutoMigrate(&Buku{}, &Member{}, &Transaksi{}, &DetailTransaksi{})
 
 //   defer db.Close()
   return db
