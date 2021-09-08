@@ -12,13 +12,16 @@ import (
 type transaksicreate struct{
 	ID_Member uint
 	Tipe string 
-}
-
-type detailtransaksicreate struct{
 	ID_Transaksi uint
 	ID_Buku uint
 	Jumlah int
 }
+
+// type detailtransaksicreate struct{
+// 	ID_Transaksi uint
+// 	ID_Buku uint
+// 	Jumlah int
+// }
 
 // nama harus besar agar dapat dipanggil
 func GetAllTransaksi(c *gin.Context){
@@ -38,12 +41,8 @@ func CreateTransaksi(c *gin.Context)  {
 
 	// deklarasi struct untuk input
 	var dataInput transaksicreate
-	var detailTransaksiInput detailtransaksicreate
 
-	// deklarasi model buku
 	var member models.Member
-	var buku models.Buku
-	var detailtransaksi models.DetailTransaksi
 
 	// input validasi
 	if err := c.ShouldBindJSON(&dataInput);err != nil {
@@ -57,35 +56,58 @@ func CreateTransaksi(c *gin.Context)  {
 		return
 	}
 
-	// cek foreign key member
-	//// SELECT * FROM members ORDER BY id LIMIT 1;
-	if err := db.Where("id = ?", dataInput.ID_Member).First(&member).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error":"anggota tidak ditemukan"})
-		return
-	}
+	
 
-	// cek id buku
-	if err := db.Where("id = ?", detailTransaksiInput.ID_Buku).First(&buku).Error; err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error":"buku tidak ditemukan"})
-			return
-		}
-	
-	// cek stok
-	if dataInput.Tipe == "pengembalian" && buku.Stok < detailTransaksiInput.Jumlah {
-		c.JSON(http.StatusBadRequest, gin.H{"error":"permintaan lebih banyak dari stok"})
-		return
-	}
-	
+	//  memasukkan input ke struct
 	transaksi := models.Transaksi{
 		// Model : data input
 		ID_Member: dataInput.ID_Member,
 		Tipe: dataInput.Tipe,
 	}
 
+		// cek foreign key member
+	//// SELECT * FROM members ORDER BY id LIMIT 1;
+	if err := db.Where("id = ?", dataInput.ID_Member).First(&member).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error":"anggota tidak ditemukan"})
+		return
+	}
+
 	// membuat transaksi
 	db.Create(&transaksi)
+
+	// deklarasi model buku
+	var buku models.Buku
+
+	detailtransaksi := models.DetailTransaksi{
+		ID_Transaksi: dataInput.ID_Transaksi,
+		ID_Buku: dataInput.ID_Buku,
+		Jumlah: dataInput.Jumlah,
+	}
+
+	// cek id buku
+	if err := db.Where("id = ?", dataInput.ID_Buku).First(&buku).Error; err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "buku tidak ditemukan"})
+			return
+	}
+	
+	// cek stok
+	if dataInput.Tipe == "peminjaman" && buku.Stok < dataInput.Jumlah {
+		c.JSON(http.StatusBadRequest, gin.H{"error":"permintaan lebih banyak dari stok"})
+		return
+	}
+
 	// membuat detail transaksi
-	db.Model(&detailtransaksi).Update(detailTransaksiInput)
+	db.Create(&detailtransaksi)
+
+	// update stok
+	if dataInput.Tipe == "peminjaman" {
+		buku.Stok = buku.Stok - dataInput.Jumlah
+		db.Model(&buku).Update(buku)
+	}
+	if dataInput.Tipe == "pengembalian" {
+		buku.Stok = buku.Stok + dataInput.Jumlah
+		db.Model(&buku).Update(buku)
+	}
 	c.JSON(http.StatusOK,gin.H{"status" : "Berhasil Ditambahkan"})
 }
 
