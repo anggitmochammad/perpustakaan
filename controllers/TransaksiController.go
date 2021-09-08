@@ -9,19 +9,20 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+// type detailtransaksicreate struct{
+// 	ID_Buku uint
+// 	Jumlah int
+// }
+
 type transaksicreate struct{
 	ID_Member uint
 	Tipe string 
-	ID_Transaksi uint
+	// detailtransaksi []detailtransaksicreate
 	ID_Buku uint
 	Jumlah int
 }
 
-// type detailtransaksicreate struct{
-// 	ID_Transaksi uint
-// 	ID_Buku uint
-// 	Jumlah int
-// }
+
 
 // nama harus besar agar dapat dipanggil
 func GetAllTransaksi(c *gin.Context){
@@ -57,7 +58,6 @@ func CreateTransaksi(c *gin.Context)  {
 	}
 
 	
-
 	//  memasukkan input ke struct
 	transaksi := models.Transaksi{
 		// Model : data input
@@ -77,9 +77,11 @@ func CreateTransaksi(c *gin.Context)  {
 
 	// deklarasi model buku
 	var buku models.Buku
+	// var trans models.Transaksi
 
 	detailtransaksi := models.DetailTransaksi{
-		ID_Transaksi: dataInput.ID_Transaksi,
+		// mengambil id transaksi yang baru dibuat
+		ID_Transaksi: uint(transaksi.ID),
 		ID_Buku: dataInput.ID_Buku,
 		Jumlah: dataInput.Jumlah,
 	}
