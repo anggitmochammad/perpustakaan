@@ -27,6 +27,8 @@ func main()  {
 		c.JSON(http.StatusOK, gin.H{"data" :"Test Api" })
 	})
 
+	route.POST("/registrasi",controllers.CreateUser)
+
 	buku := route.Group("buku")
 	{
 		buku.GET("/",controllers.GetAllBuku)

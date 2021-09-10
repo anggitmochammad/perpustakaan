@@ -11,7 +11,6 @@ import (
 
 type bukucreate struct{
 	NamaBuku string `json:"nama_buku"`
-	NoTelp string 	`json:"no_telp"`
 	Stok int 		`json:"stok"`
 }
 
@@ -37,14 +36,13 @@ func CreateBuku(c *gin.Context)  {
 	}
 
 	// proses input
-	if dataInput.NamaBuku == "" || dataInput.NoTelp == "" || dataInput.Stok == 0 {
+	if dataInput.NamaBuku == "" || dataInput.Stok == 0 {
 		c.JSON(http.StatusBadRequest,gin.H{"error" : "data tidak boleh kosong"})
 		return
 	}
 	buku := models.Buku{
 		// Model : data input
 		NamaBuku: dataInput.NamaBuku,
-		NoTelp: dataInput.NoTelp,
 		Stok: dataInput.Stok,
 	}
 
@@ -70,7 +68,7 @@ func UpdateBuku(c *gin.Context)  {
 	}
 
 	// proses input
-	if dataInput.NamaBuku == "" || dataInput.NoTelp == "" || dataInput.Stok == 0 {
+	if dataInput.NamaBuku == "" || dataInput.Stok == 0 {
 		c.JSON(http.StatusBadRequest,gin.H{"error" : "data tidak boleh kosong"})
 		return
 	}

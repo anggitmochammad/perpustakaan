@@ -139,7 +139,6 @@ func UpdateTransaksi(c *gin.Context)  {
 	db.Model(&transaksi).Update(dataInput)
 	
 	c.JSON(http.StatusOK,gin.H{"status" : "Berhasil Diubah"})
-
 }
 
 func DeleteTransaksi(c *gin.Context)  {

@@ -22,7 +22,7 @@ func SetupModels() *gorm.DB  {
   }
 
 //   migrate tabel
-  db.AutoMigrate(&Buku{}, &Member{}, &Transaksi{}, &DetailTransaksi{})
+  db.AutoMigrate(&Buku{}, &Member{}, &Transaksi{}, &DetailTransaksi{}, &User{})
 
 //   defer db.Close()
   return db
