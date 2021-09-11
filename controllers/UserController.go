@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"crypto/sha1"
+	"encoding/base64"
 	"net/http"
 
 	"perpustakaan/models"
@@ -11,7 +12,7 @@ import (
 )
 
 type usercreate struct{
-	Username string `gorm:"unique"`
+	Username string 
 	Password string
 }
 
@@ -42,26 +43,21 @@ func CreateUser(c *gin.Context)  {
 	if dataInput.Username == "" || dataInput.Password == "" {
 		c.JSON(http.StatusBadRequest,gin.H{"error" : "data tidak boleh kosong"})
 		return
-	}
-
-	// cek unique username
-	if result := db.Where("username = ?", dataInput.Username).First(&usermodel); result.Value != nil {
-		c.JSON(http.StatusBadRequest,gin.H{"error" : "Username sudah digunakan"})
-		return
-	}
-
+	}  		
 
 	hash := sha1.New()
 	hash.Write([]byte(dataInput.Password))
-	password := hash.Sum(nil)
-	// dataInput.Password = password
+	password := base64.URLEncoding.EncodeToString(hash.Sum(nil))
 	user := models.User{
 		// Model : data input
 		Username: dataInput.Username,
-		Password: string(password),
+		Password: password,
 	}
 
-	db.Create(&user)
+	if err := db.Create(&user); err.Error != nil{
+		c.JSON(http.StatusBadRequest,gin.H{"error" : "username sudah digunakan"})
+		return
+	}
 	c.JSON(http.StatusOK,gin.H{"status" : "Berhasil Ditambahkan"})
 	
 }
