@@ -31,8 +31,6 @@ func CreateUser(c *gin.Context)  {
 	// koneksi db . membuka sesuai setingan setup.go
 	db:= c.MustGet("db").(*gorm.DB)
 
-	var usermodel []models.User
-
 	// input validasi
 	var dataInput usercreate
 	if err := c.ShouldBindJSON(&dataInput);err != nil {
