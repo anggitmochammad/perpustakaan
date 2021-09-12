@@ -43,9 +43,11 @@ func CreateUser(c *gin.Context)  {
 		return
 	}  		
 
+	// hash password
 	hash := sha1.New()
 	hash.Write([]byte(dataInput.Password))
 	password := base64.URLEncoding.EncodeToString(hash.Sum(nil))
+
 	user := models.User{
 		// Model : data input
 		Username: dataInput.Username,

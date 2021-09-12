@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"perpustakaan/controllers"
+	"perpustakaan/middleware"
 	"perpustakaan/models"
 )
 
@@ -28,8 +29,9 @@ func main()  {
 	})
 
 	route.POST("/registrasi",controllers.CreateUser)
+	route.POST("/login",controllers.Login)
 
-	buku := route.Group("buku")
+	buku := route.Group("buku",middleware.Auth)
 	{
 		buku.GET("/",controllers.GetAllBuku)
 		buku.POST("/",controllers.CreateBuku)
